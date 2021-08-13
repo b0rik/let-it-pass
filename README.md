@@ -10,3 +10,4 @@ Features to be added:
 6. Password generator
 7. Show all passwords
 8. GUI
+9. try:execpt connection etc.
