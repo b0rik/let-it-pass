@@ -80,3 +80,9 @@ def find_by_email(con, email):
 
     c.execute('Select * FROM accounts WHERE Email=:email', {'email': email})
     return c.fetchall()
+
+def show_all(con):
+    c = con.cursor()
+
+    c.execute('SELECT * FROM accounts')
+    return c.fetchall()

@@ -1,6 +1,6 @@
 import database
 
-menu_options = 3
+menu_options = 4
 
 def login(con):
     if database.is_empty(con, 'master'):
@@ -36,6 +36,7 @@ def start_menu():
         print('*' * 20)
         print('1.Find account.')
         print('2.Add account.')
+        print('3.Show all the accounts.')
         print('0.Quit.')
         selection = int(input('What would you like to do?\n'))
 
@@ -100,4 +101,8 @@ def show_results(result):
     else:
         print('No results found.')
 
-options = {1: find_menu, 2: insert_menu}
+def show_all_menu(con):
+    result = database.show_all(con)
+    show_results(result)
+
+options = {1: find_menu, 2: insert_menu, 3: show_all_menu}
