@@ -8,6 +8,9 @@ class DbEntry():
         self.username = username
         self.password = password
 
+    def __str__(self):
+        return f'Application: {self.app} | Url: {self.url} | Email: {self.email} | Username: {self.username} | Password: {self.password}'
+
 # create a connection to the database
 def create_connection(db):
     return sqlite3.connect(f'{db}.db')

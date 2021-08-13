@@ -87,8 +87,17 @@ def find_menu(con):
         print('*' * 20)
         email = input('Enter the email: ')
         result = database.find_by_email(con, email)
+    
+    show_results(result)
 
-    # print the found result
-    print(result)
+def show_results(result):
+    # result list is not empty
+    if result:
+        for acc in result:
+            app, url, email, username, password = acc
+            print(database.DbEntry(app, url, email, username, password))
+    # no results
+    else:
+        print('No results found.')
 
 options = {1: find_menu, 2: insert_menu}
