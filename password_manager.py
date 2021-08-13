@@ -1,40 +1,21 @@
-import sqlite3
+import database
+import menu
 
-def create_table():
-    with sqlite3.connect('pass.db') as con:
-        cur = con.cursor()
+# create connection to the database
+con = database.create_connection('pass')
 
-        cur.execute('''CREATE TABLE IF NOT EXISTS accounts (
-            Application text,
-            Username text,
-            Email text,
-            Password text
-        )''')
+# create tables
+database.create_master_table(con)
+database.create_accounts_table(con)
 
-        con.commit()
+# on first run get a master password
+# login using the master password
+menu.login(con)
 
-def insert_to_table(app, user, email, password):
-    with sqlite3.connect('pass.db') as con:
-        cur = con.cursor()
-        cur.execute('INSERT INTO accounts VALUES (?, ?, ?, ?)', (app, user, email, password))
-        con.commit()
-
-def show_all():
-    with sqlite3.connect('pass.db') as con:
-        cur = con.cursor()
-        cur.execute('SELECT * FROM accounts')
-        print(cur.fetchall())
-
-def delete_all():
-    with sqlite3.connect('pass.db') as con:
-        cur = con.cursor()
-        cur.execute('DELETE FROM accounts')
-        con.commit()
-
-# TODO:
-# 1.create table
-# 2.get master password
-# 3.show menu
-# ...
-
-create_table()
+# show start menu and get option
+while True:
+    selection = menu.start_menu()
+    if selection != 0:
+        menu.options[selection](con)
+    else:
+        break
