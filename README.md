@@ -8,3 +8,5 @@ Features to be added:
 4. Copy password to clipboard
 5. Delete account
 6. Password generator
+7. Show all passwords
+8. GUI
