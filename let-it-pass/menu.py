@@ -1,6 +1,7 @@
 import database
+import crypt_handler
 
-menu_options = 4
+MENU_OPTIONS = 4
 
 def login(con):
     if database.is_empty(con, 'master'):
@@ -9,6 +10,7 @@ def login(con):
             password = input('Enter a master password: ')
             print('*' * 20)
             verify = input('Enter again to verify: ')
+
             if password == verify:
                 database.insert_to_master(con, password)
                 print('*' * 20)
@@ -22,13 +24,15 @@ def login(con):
     while True:
         print('*' * 20)
         password = input('Enter the master password: ')
-        master = database.get_master_password(con)
+        hashed = database.get_master_hashed(con)
 
-        if password == master:
+        if crypt_handler.check_password(password, hashed):
             break
         else:
             print('*' * 20)
             print('The password is incorrect')
+
+    return crypt_handler.make_key(password)
 
 # show the initial menu
 def start_menu():
@@ -40,13 +44,13 @@ def start_menu():
         print('0.Quit.')
         selection = int(input('What would you like to do?\n'))
 
-        if 0 <= selection < menu_options:
+        if 0 <= selection < MENU_OPTIONS:
             return selection
         else:
             print('*' * 20)
             print('Invalid selection.\n')
 
-def insert_menu(con):
+def insert_menu(con, key):
     # get the user input
     print('*' * 20)
     app = input('Enter the application name: ')
@@ -58,15 +62,16 @@ def insert_menu(con):
     username = input('Enter the account username: ')
     print('*' * 20)
     password = input('Enter the account password: ')
+    encrypted_password = crypt_handler.encrypt_password(password, key)
 
-    entry = database.DbEntry(app, url, email, username, password)
+    entry = database.DbEntry(app, url, email, username, encrypted_password)
 
     # insert account to the database
     database.insert_to_accounts(con, entry)
     print('*' * 20)
     print('Account has been added.')
 
-def find_menu(con):
+def find_menu(con, key):
     while True:
         # get user selected finding option
         print('*' * 20)
@@ -89,22 +94,23 @@ def find_menu(con):
         email = input('Enter the email: ')
         result = database.find_by_email(con, email)
     
-    show_results(con, result)
+    show_results(con, result, key)
 
-def show_results(con, result):
+def show_results(con, result, key):
     # result list is not empty
     if result:
         for acc in result:
             app, url, email, username, password = acc
+            decrypted_password = crypt_handler.decrypt_password(password, key)
             res_ind = result.index(acc)
-            print(f'{res_ind}.' + str(database.DbEntry(app, url, email, username, password)))
+            print(f'{res_ind}.' + str(database.DbEntry(app, url, email, username, decrypted_password.decode('utf8'))))
 
-        change_delete_menu(con, result)
+        change_delete_menu(con, result, key)
     # no results
     else:
         print('No results found.')
 
-def change_delete_menu(con, result):
+def change_delete_menu(con, result, key):
     while True:
         selection = input('Would you like to delete(d) an account, change a password(c) or return to main menu(q)? ')
         if selection in ('d', 'c', 'q'):
@@ -135,15 +141,18 @@ def change_delete_menu(con, result):
 
         app, url, email, username, password = result[acc_to_update]
         entry = database.DbEntry(app, url, email, username, password)
-        new_pass = input('Enter new password: ')
-        database.change_password(con, entry, new_pass)
+
+        new_password = input('Enter new password: ')
+        encrypted_password = crypt_handler.encrypt_password(new_password, key)
+
+        database.change_password(con, entry, encrypted_password)
         print('Password changed.')
 
 
         
 
-def show_all_menu(con):
+def show_all_menu(con, key):
     result = database.show_all(con)
-    show_results(con, result)
+    show_results(con, result, key)
 
 options = {1: find_menu, 2: insert_menu, 3: show_all_menu}

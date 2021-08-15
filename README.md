@@ -2,9 +2,8 @@
 A basic password manager with basic CRUD capabilities written in python.
 
 Features to be added:
-1. Hash passwords
-2. Prettier output
-3. Copy password to clipboard
-4. Password generator
-5. GUI
-6. try:execpt connection etc.
+1. Prettier output
+2. Copy password to clipboard
+3. Password generator
+4. GUI
+5. try:execpt connection etc.

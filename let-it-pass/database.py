@@ -1,4 +1,5 @@
 import sqlite3
+import crypt_handler
 
 class DbEntry():
     def __init__(self, app, url, email, username, password):
@@ -37,19 +38,17 @@ def create_accounts_table(con):
 
 # insert master password to the master table
 def insert_to_master(con, password):
+    hashed = crypt_handler.hash_password(password)
+
     with con:
         c = con.cursor()
-        c.execute('INSERT INTO master VALUES (:password)', {"password": password})
+        c.execute('INSERT INTO master VALUES (:password)', {"password": hashed})
 
 # insert account to the accounts table
 def insert_to_accounts(con, entry):
     with con:
         c = con.cursor()
         c.execute('INSERT INTO accounts VALUES(?, ?, ?, ?, ?)', (entry.app, entry.url, entry.email, entry.username, entry.password))
-
-#delete from accounts table
-def delete_account(con, entry):
-    pass
 
 # check if table is empty
 def is_empty(con, table):
@@ -61,7 +60,7 @@ def is_empty(con, table):
     return True if res == 0 else False
 
 # return the master password
-def get_master_password(con):
+def get_master_hashed(con):
     with con:
         c = con.cursor()
         c.execute('SELECT Password FROM master')
