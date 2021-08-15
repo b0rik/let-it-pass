@@ -1,6 +1,7 @@
 import sqlite3
 import crypt_handler
 
+# database entry object containing all the information nessecary
 class DbEntry():
     def __init__(self, app, url, email, username, password):
         self.app = app
@@ -83,6 +84,7 @@ def find_by_email(con, email):
         c.execute('Select * FROM accounts WHERE Email=:email', {'email': email})
         return c.fetchall()
 
+# get all the accounts in the database
 def show_all(con):
     with con:
         c = con.cursor()
@@ -90,6 +92,7 @@ def show_all(con):
         c.execute('SELECT * FROM accounts')
         return c.fetchall()
 
+# delete an account from the database
 def delete_account(con, entry):
     with con:
         c = con.cursor()
@@ -97,6 +100,7 @@ def delete_account(con, entry):
         app, email = entry.app, entry.email
         c.execute('DELETE FROM accounts WHERE (Application = :app AND Email = :email)', {'app': app, 'email': email})
 
+# change a password for a chosen account
 def change_password(con, entry, new_pass):
     with con:
         c = con.cursor()
