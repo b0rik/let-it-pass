@@ -89,20 +89,61 @@ def find_menu(con):
         email = input('Enter the email: ')
         result = database.find_by_email(con, email)
     
-    show_results(result)
+    show_results(con, result)
 
-def show_results(result):
+def show_results(con, result):
     # result list is not empty
     if result:
         for acc in result:
             app, url, email, username, password = acc
-            print(database.DbEntry(app, url, email, username, password))
+            res_ind = result.index(acc)
+            print(f'{res_ind}.' + str(database.DbEntry(app, url, email, username, password)))
+
+        change_delete_menu(con, result)
     # no results
     else:
         print('No results found.')
 
+def change_delete_menu(con, result):
+    while True:
+        selection = input('Would you like to delete(d) an account, change a password(c) or return to main menu(q)? ')
+        if selection in ('d', 'c', 'q'):
+            break
+        else:
+            print('Invalid selection.')
+    
+    if selection == 'd':
+        while True:
+            acc_to_delete = int(input('Enter the number of the account you want to delete: '))
+            if 0 <= acc_to_delete < len(result):
+                break
+            else:
+                print('Invalid option.')
+            
+        app, url, email, username, password = result[acc_to_delete]
+        entry = database.DbEntry(app, url, email, username, password)
+        database.delete_account(con, entry)
+        print('Account deleted.')
+
+    elif selection == 'c':
+        while True:
+            acc_to_update = int(input('Enter the number of the account you want to update: '))
+            if 0 <= acc_to_update < len(result):
+                break
+            else:
+                print('Invalid option')
+
+        app, url, email, username, password = result[acc_to_update]
+        entry = database.DbEntry(app, url, email, username, password)
+        new_pass = input('Enter new password: ')
+        database.change_password(con, entry, new_pass)
+        print('Password changed.')
+
+
+        
+
 def show_all_menu(con):
     result = database.show_all(con)
-    show_results(result)
+    show_results(con, result)
 
 options = {1: find_menu, 2: insert_menu, 3: show_all_menu}

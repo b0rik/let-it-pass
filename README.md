@@ -3,10 +3,8 @@ A basic password manager with basic CRUD capabilities written in python.
 
 Features to be added:
 1. Hash passwords
-2. Update credentials
-3. Prettier output
-4. Copy password to clipboard
-5. Delete account
-6. Password generator
-7. GUI
-8. try:execpt connection etc.
+2. Prettier output
+3. Copy password to clipboard
+4. Password generator
+5. GUI
+6. try:execpt connection etc.

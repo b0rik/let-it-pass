@@ -30,7 +30,8 @@ def create_accounts_table(con):
                 Url text,
                 Email text,
                 Username text,
-                Password text
+                Password text,
+                primary key (Application, Email)
             )'''
         )
 
@@ -69,20 +70,37 @@ def get_master_password(con):
 
 # find accounts by application name
 def find_by_app(con, app):
-    c = con.cursor()
+    with con:
+        c = con.cursor()
 
-    c.execute('Select * FROM accounts WHERE Application=:app', {'app': app})
-    return c.fetchall()
+        c.execute('Select * FROM accounts WHERE Application = :app', {'app': app})
+        return c.fetchall()
 
 #find accounts by email
 def find_by_email(con, email):
-    c = con.cursor()
+    with con:
+        c = con.cursor()
 
-    c.execute('Select * FROM accounts WHERE Email=:email', {'email': email})
-    return c.fetchall()
+        c.execute('Select * FROM accounts WHERE Email=:email', {'email': email})
+        return c.fetchall()
 
 def show_all(con):
-    c = con.cursor()
+    with con:
+        c = con.cursor()
 
-    c.execute('SELECT * FROM accounts')
-    return c.fetchall()
+        c.execute('SELECT * FROM accounts')
+        return c.fetchall()
+
+def delete_account(con, entry):
+    with con:
+        c = con.cursor()
+
+        app, email = entry.app, entry.email
+        c.execute('DELETE FROM accounts WHERE (Application = :app AND Email = :email)', {'app': app, 'email': email})
+
+def change_password(con, entry, new_pass):
+    with con:
+        c = con.cursor()
+
+        app, email = entry.app, entry.email
+        c.execute('UPDATE accounts SET Password = :password WHERE (Application = :app AND Email = :email)', {'password': new_pass, 'app': app, 'email': email})
