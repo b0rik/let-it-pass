@@ -1,6 +1,7 @@
 import database
 import crypt_handler
 
+
 # number of options in the main menu
 MENU_OPTIONS = 4
 
@@ -67,7 +68,7 @@ def start_menu():
             print('Invalid selection.\n')
             print('-' * 20)
 
-# the menu for addeing account to the database
+# the menu for adding account to the database
 def insert_menu(con, key):
     # get the user input
     print('-' * 20)
@@ -143,7 +144,8 @@ def show_results(con, result, key):
         print('No results found.')
         print('-' * 20)
 
-# menu for chaning a password or deleting an account
+#TODO: repeating code need to rewrite function and optimize
+# menu for changing a password or deleting an account
 def change_delete_menu(con, result, key):
     while True:
         print('-' * 20)

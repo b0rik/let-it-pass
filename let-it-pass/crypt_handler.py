@@ -3,6 +3,7 @@ from cryptography.fernet import Fernet
 from cryptography.hazmat.primitives.kdf.scrypt import Scrypt
 import base64
 
+
 # encryption salt
 SALT = b'b3sT s@1t 3vaa'
 
@@ -31,6 +32,6 @@ def encrypt_password(password, key):
 # make a key for encryption from the master password
 def make_key(password):
     global SALT
-    kdf = Scrypt(salt = SALT, length = 32, n = 2 ** 14 ,r = 8, p = 1)
+    kdf = Scrypt(salt = SALT, length = 32, n = 2 ** 14, r = 8, p = 1)
     key = base64.urlsafe_b64encode(kdf.derive(password.encode('utf8')))
     return key

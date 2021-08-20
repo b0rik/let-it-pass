@@ -1,8 +1,12 @@
 import database
 import menu
 
+
 # create connection to the database
 con = database.create_connection('pass')
+
+if con is None:
+    quit()
 
 # create tables
 database.create_master_table(con)

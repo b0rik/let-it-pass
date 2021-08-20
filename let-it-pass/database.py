@@ -1,6 +1,7 @@
 import sqlite3
 import crypt_handler
 
+
 # database entry object containing all the information nessecary
 class DbEntry():
     def __init__(self, app, url, email, username, password):
@@ -15,6 +16,16 @@ class DbEntry():
 
 # create a connection to the database
 def create_connection(db):
+    con = None
+
+    try:
+        con = sqlite3.connect(f'{db}.db')
+    except Exception as e:
+        print(e)
+
+    return con
+
+
     return sqlite3.connect(f'{db}.db')
 
 # create a table for the master password
@@ -72,7 +83,6 @@ def get_master_hashed(con):
 def find_by_app(con, app):
     with con:
         c = con.cursor()
-
         c.execute('Select * FROM accounts WHERE Application = :app', {'app': app})
         return c.fetchall()
 
@@ -80,7 +90,6 @@ def find_by_app(con, app):
 def find_by_email(con, email):
     with con:
         c = con.cursor()
-
         c.execute('Select * FROM accounts WHERE Email=:email', {'email': email})
         return c.fetchall()
 
@@ -88,7 +97,6 @@ def find_by_email(con, email):
 def show_all(con):
     with con:
         c = con.cursor()
-
         c.execute('SELECT * FROM accounts')
         return c.fetchall()
 
@@ -96,14 +104,10 @@ def show_all(con):
 def delete_account(con, entry):
     with con:
         c = con.cursor()
-
-        app, email = entry.app, entry.email
-        c.execute('DELETE FROM accounts WHERE (Application = :app AND Email = :email)', {'app': app, 'email': email})
+        c.execute('DELETE FROM accounts WHERE (Application = :app AND Email = :email)', {'app': entry.app, 'email': entry.email})
 
 # change a password for a chosen account
 def change_password(con, entry, new_pass):
     with con:
         c = con.cursor()
-
-        app, email = entry.app, entry.email
-        c.execute('UPDATE accounts SET Password = :password WHERE (Application = :app AND Email = :email)', {'password': new_pass, 'app': app, 'email': email})
+        c.execute('UPDATE accounts SET Password = :password WHERE (Application = :app AND Email = :email)', {'password': new_pass, 'app': entry.app, 'email': entry.email})
